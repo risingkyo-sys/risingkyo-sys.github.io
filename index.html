@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 시작</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "Apple SD Gothic Neo", sans-serif;
+      background: #0f1923;
+      color: #e8edf2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .time-block {
+      font-size: 72px;
+      font-weight: 200;
+      letter-spacing: 4px;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .date-block {
+      font-size: 16px;
+      color: #6b7f8f;
+      text-align: center;
+      margin-top: 10px;
+      letter-spacing: 2px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 40px;
+      background: #1e3248;
+      margin: 32px auto;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: 300;
+      color: #a8c0d6;
+      text-align: center;
+      margin-bottom: 32px;
+      letter-spacing: 1px;
+    }
+
+    .routine-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: #141f2b;
+      border: 1px solid #1e3248;
+      border-radius: 12px;
+      padding: 20px 18px;
+    }
+
+    .card-time {
+      font-size: 11px;
+      color: #4a6070;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #c8dcea;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #4a6070;
+      line-height: 1.6;
+    }
+
+    .card.highlight {
+      border-color: #2a5080;
+      background: #0d1e30;
+    }
+
+    .card.highlight .card-title {
+      color: #5aa0d8;
+    }
+
+    .frog {
+      font-size: 11px;
+      color: #3d7ab5;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    .mantra {
+      font-size: 13px;
+      color: #2a4a60;
+      text-align: center;
+      letter-spacing: 2px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .obsidian-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e3248;
+      border: 1px solid #2a4a60;
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: #a8c0d6;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .obsidian-btn:hover {
+      background: #2a4a60;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="time-block" id="clock">--:--</div>
+  <div class="date-block" id="date">---</div>
+
+  <div class="divider"></div>
+
+  <div class="question" id="greeting">지금 이 시간, 가장 중요한 일은 무엇인가?</div>
+
+  <div class="routine-grid">
+    <div class="card highlight">
+      <div class="card-time">05:45 – 08:30</div>
+      <div class="card-title">🌅 오전 루틴</div>
+      <div class="card-desc">미 증시 확인 → 운동+팟캐스트 → 논문 초록 낭독</div>
+      <div class="frog">🐸 개구리 먹기</div>
+    </div>
+    <div class="card">
+      <div class="card-time">08:30 – 17:30</div>
+      <div class="card-title">🏥 수술 & 진료</div>
+      <div class="card-desc">주 2회 13-14시<br>Deep Work (레지스트리 / RStudio)</div>
+    </div>
+    <div class="card">
+      <div class="card-time">18:30 – 22:00</div>
+      <div class="card-title">🌙 저녁 루틴</div>
+      <div class="card-desc">가족 시간 → 영양제 → 아날로그 플래너 → 영어 3줄 일기</div>
+    </div>
+    <div class="card">
+      <div class="card-time">21:30 – 22:30</div>
+      <div class="card-title">🌃 내일 준비</div>
+      <div class="card-desc">OP 캘린더 시뮬레이션 → 의복 셋팅 → 22:30 취침</div>
+    </div>
+    <div class="card">
+      <div class="card-time">일요일 저녁</div>
+      <div class="card-title">📆 위클리 준비</div>
+      <div class="card-desc">수술 로드맵 → 저탄수 식단 → 주간 KPI 1개</div>
+    </div>
+    <div class="card highlight">
+      <div class="card-time">지금 바로</div>
+      <div class="card-title">📓 Obsidian 열기</div>
+      <div class="card-desc">유튜브 말고, 먼저 할 일부터.</div>
+      <a class="obsidian-btn" href="obsidian://open">열기 →</a>
+    </div>
+  </div>
+
+  <div class="mantra">"Winning the Morning starts the Night before"</div>
+
+  <script>
+    function update() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}`;
+
+      const days = ['일','월','화','수','목','금','토'];
+      const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+      document.getElementById('date').textContent = dateStr;
+
+      const hour = now.getHours();
+      let greeting = '지금 이 시간, 가장 중요한 일은 무엇인가?';
+      if (hour < 7) greeting = '🐸 개구리를 먹을 시간입니다. 논문 초록부터.';
+      else if (hour < 9) greeting = '수술 준비 완료. 오늘도 집중.';
+      else if (hour < 13) greeting = '수술 시간입니다.';
+      else if (hour < 14) greeting = '⚡ Deep Work 시간 — 레지스트리 or RStudio';
+      else if (hour < 18) greeting = '진료 집중. 유튜브는 나중에.';
+      else if (hour < 22) greeting = '가족 시간입니다. 폰은 내려놓으세요.';
+      else greeting = '💤 22:30 취침. 내일의 에너지를 지금 만듭니다.';
+      document.getElementById('greeting').textContent = greeting;
+    }
+    update();
+    setInterval(update, 30000);
+  </script>
+
+</body>
+</html>
