@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Start</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --border: #eeeeee;
+  --border2: #e0e0e0;
+  --text: #111111;
+  --dim: #aaaaaa;
+  --dim2: #777777;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; overflow-y:auto;
+}
+
+/* TOP */
+.top {
+  position:relative; overflow:hidden;
+  padding:28px 24px 24px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,#f8f9ff 0%,#fff 50%,#f9f8ff 100%);
+  text-align:center;
+}
+.top::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,0.06) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 50%,rgba(16,185,129,0.05) 0%,transparent 60%);
+  pointer-events:none;
+}
+.clock { font-family:'Inter',sans-serif; font-size:72px; font-weight:200; letter-spacing:-3px; line-height:1; position:relative; z-index:1; }
+.date-str { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-top:4px; position:relative; z-index:1; }
+.quote-text { font-size:14px; font-weight:500; color:#333; font-style:italic; line-height:1.6; margin-top:14px; position:relative; z-index:1; }
+.quote-author { font-size:10px; color:var(--dim); margin-top:4px; letter-spacing:2px; text-transform:uppercase; position:relative; z-index:1; }
+
+/* SECTION */
+.section { padding:20px 20px 0; }
+.section-title {
+  font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase;
+  color:var(--dim); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+/* SCHEDULE */
+.day-tabs { display:flex; gap:5px; margin-bottom:12px; }
+.day-tab {
+  flex:1; padding:8px 0; text-align:center;
+  font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px;
+  color:var(--dim); border:1px solid var(--border2); border-radius:6px;
+  cursor:pointer; transition:all 0.15s;
+}
+.day-tab.active { background:var(--text); border-color:var(--text); color:#fff; }
+
+.tb-schedule { display:flex; flex-direction:column; gap:4px; padding-bottom:20px; }
+.tb-row { display:flex; gap:10px; align-items:stretch; min-height:44px; }
+.tb-time {
+  font-family:'Inter',sans-serif; font-size:11px; font-weight:500;
+  color:var(--dim); width:52px; flex-shrink:0; display:flex; align-items:center;
+}
+.tb-time.now-time { color:var(--text); font-weight:700; font-size:12px; }
+.tb-block {
+  flex:1; padding:10px 14px; border-left:2px solid var(--border2);
+  display:flex; align-items:center; border-radius:0 6px 6px 0; transition:all 0.3s;
+}
+.tb-block.free    { border-left-color:#e5e7eb; background:#fafafa; }
+.tb-block.frog    { border-left-color:#f59e0b; background:#fffbeb; }
+.tb-block.clinic  { border-left-color:#3b82f6; background:#eff6ff; }
+.tb-block.surgery { border-left-color:#ef4444; background:#fff1f2; }
+.tb-block.proc    { border-left-color:#8b5cf6; background:#f5f3ff; }
+.tb-block.excel   { border-left-color:#217346; background:#f0faf4; }
+.tb-block.family  { border-left-color:#22c55e; background:#f0fdf4; }
+.tb-block.sleep   { border-left-color:#d1d5db; background:#fafafa; }
+.tb-block.transit { border-left-color:#9ca3af; background:#f9fafb; }
+.tb-block.done    { opacity:0.35; }
+
+.tb-block.now { border-left-width:4px; transform:translateX(3px); }
+.tb-block.now .tb-name { font-weight:700; }
+.tb-block.now.free    { border-left-color:#6366f1; background:#eef2ff; box-shadow:0 2px 12px rgba(99,102,241,0.2); }
+.tb-block.now.frog    { border-left-color:#d97706; background:#fde68a; box-shadow:0 2px 12px rgba(245,158,11,0.25); }
+.tb-block.now.clinic  { border-left-color:#1d4ed8; background:#bfdbfe; box-shadow:0 2px 12px rgba(29,78,216,0.25); }
+.tb-block.now.surgery { border-left-color:#b91c1c; background:#fecaca; box-shadow:0 2px 12px rgba(185,28,28,0.25); }
+.tb-block.now.proc    { border-left-color:#6d28d9; background:#ddd6fe; box-shadow:0 2px 12px rgba(109,40,217,0.25); }
+.tb-block.now.excel   { border-left-color:#155724; background:#c3e6cb; box-shadow:0 2px 12px rgba(33,115,70,0.25); }
+.tb-block.now.family  { border-left-color:#15803d; background:#bbf7d0; box-shadow:0 2px 12px rgba(21,128,61,0.25); }
+.tb-block.now.transit { border-left-color:#374151; background:#e5e7eb; }
+.tb-block.now.sleep   { border-left-color:#6b7280; background:#e5e7eb; }
+
+.tb-name { font-size:14px; font-weight:500; color:var(--text); }
+.tb-block.free .tb-name { color:var(--dim); font-weight:300; font-size:12px; }
+.tb-block.span2 { min-height:92px; }
+.tb-block.span3 { min-height:140px; }
+
+/* 날씨 */
+.weather-wrap { padding-bottom:20px; }
+.weather-today { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
+.w-icon { font-size:48px; line-height:1; }
+.w-temp { font-family:'Inter',sans-serif; font-size:48px; font-weight:200; color:var(--text); line-height:1; letter-spacing:-2px; }
+.w-desc { font-size:13px; color:var(--dim2); margin-top:3px; }
+.w-sub { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.w-sub-item { font-size:13px; color:var(--dim2); }
+.w-sub-item b { color:var(--text); font-weight:500; }
+
+.aqi-bar { display:flex; gap:8px; margin-bottom:14px; }
+.aqi-card { flex:1; padding:10px 12px; border-radius:8px; border:1px solid var(--border); text-align:center; }
+.aqi-label { font-size:10px; color:var(--dim); margin-bottom:4px; }
+.aqi-val { font-size:15px; font-weight:600; }
+.aqi-good     { background:#f0fdf4; color:#16a34a; border-color:#bbf7d0; }
+.aqi-moderate { background:#fffbeb; color:#d97706; border-color:#fde68a; }
+.aqi-bad      { background:#fff1f2; color:#dc2626; border-color:#fecaca; }
+.aqi-verybad  { background:#fdf4ff; color:#9333ea; border-color:#e9d5ff; }
+
+.weekly-weather { display:flex; gap:5px; }
+.ww-day { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px; border-radius:8px; border:1px solid var(--border); }
+.ww-day.today { background:#f5f5f5; border-color:#ccc; }
+.ww-dayname { font-size:11px; color:var(--dim); font-weight:600; }
+.ww-icon { font-size:20px; }
+.ww-hi { font-size:13px; font-weight:600; color:var(--text); }
+.ww-lo { font-size:12px; color:var(--dim); }
+
+/* 퀵링크 — 3x3 아이콘 정사각형 */
+.links-wrap { padding-bottom:32px; }
+.link-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.ql {
+  display:flex; align-items:center; justify-content:center;
+  aspect-ratio:1/1; border-radius:16px; border:1px solid var(--border);
+  text-decoration:none; background:#fafafa;
+  transition:all 0.15s; cursor:pointer;
+  -webkit-tap-highlight-color:rgba(0,0,0,0.05);
+}
+.ql:active { background:#ececec; transform:scale(0.92); }
+.ql-icon { width:38px; height:38px; object-fit:contain; border-radius:8px; }
+.ql-icon-fallback {
+  width:38px; height:38px; font-size:30px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:600; color:var(--dim2);
+}
+.ql-name { display:none; }
+
+.updated { font-size:10px; color:var(--dim); letter-spacing:1px; text-align:right; padding:0 20px 20px; }
+.loading { font-size:13px; color:var(--dim); font-style:italic; }
+.error-msg { font-size:12px; color:#f87171; }
+.divider { height:8px; background:#f5f5f5; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="clock" id="clock">00:00</div>
+  <div class="date-str" id="date">---</div>
+  <div class="quote-text" id="quoteText">—</div>
+  <div class="quote-author" id="quoteAuthor"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Daily Schedule</div>
+  <div class="day-tabs">
+    <div class="day-tab" id="tab-1" onclick="setDay(1)">MON</div>
+    <div class="day-tab" id="tab-2" onclick="setDay(2)">TUE</div>
+    <div class="day-tab" id="tab-3" onclick="setDay(3)">WED</div>
+    <div class="day-tab" id="tab-4" onclick="setDay(4)">THU</div>
+    <div class="day-tab" id="tab-5" onclick="setDay(5)">FRI</div>
+  </div>
+  <div class="tb-schedule" id="schedule"></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">날씨 — 고양시</div>
+  <div class="weather-wrap">
+    <div id="weather-today"><div class="loading">불러오는 중...</div></div>
+    <div id="weather-aqi"></div>
+    <div id="weather-weekly"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-title">Quick Links</div>
+  <div class="links-wrap">
+    <div class="link-grid" id="quickLinks"></div>
+  </div>
+</div>
+<div class="updated" id="updated-time"></div>
+
+<script>
+const LINKS = [
+  { name:'Obsidian',      href:'obsidian://open',                favicon:'https://obsidian.md/favicon.ico',                                    target:'app' },
+  { name:'통합가계부',    href:'https://docs.google.com/spreadsheets/d/1kzI_CiFWc7MWYQxZSwmGTMQ2orgtb-2bXD_U7Ig8diY/edit?gid=1329667526#gid=1329667526', favicon:'https://ssl.gstatic.com/docs/spreadsheets/favicon3.ico', target:'_blank' },
+  { name:'NCC 메일',      href:'https://mail.ncc.re.kr',         favicon:'https://www.google.com/s2/favicons?sz=64&domain=ncc.re.kr',          target:'_blank' },
+  { name:'YouTube',       href:'https://youtube.com',            favicon:'https://www.youtube.com/favicon.ico',                                target:'_blank' },
+  { name:'NAVER',         href:'https://naver.com',              favicon:'https://www.google.com/s2/favicons?sz=64&domain=naver.com',          target:'_blank' },
+  { name:'Daum',          href:'https://daum.net',               favicon:'https://www.google.com/s2/favicons?sz=64&domain=daum.net',           target:'_blank' },
+  { name:'캘린더',        href:'calshow://',                     favicon:'https://www.google.com/s2/favicons?sz=64&domain=apple.com',          target:'app' },
+  { name:'Yahoo Finance', href:'https://finance.yahoo.com',      favicon:'https://www.google.com/s2/favicons?sz=64&domain=finance.yahoo.com',  target:'_blank' },
+  { name:'Finviz',        href:'https://finviz.com',             favicon:'https://www.google.com/s2/favicons?sz=64&domain=finviz.com',         target:'_blank' },
+];
+
+function buildLinks(){
+  const grid=document.getElementById('quickLinks');
+  LINKS.forEach(l=>{
+    const a=document.createElement('a');
+    a.className='ql';
+    a.href=l.href;
+    if(l.target==='_blank') a.target='_blank';
+    const img=document.createElement('img');
+    img.className='ql-icon'; img.src=l.favicon; img.alt=l.name;
+    img.onerror=()=>{
+      const sp=document.createElement('span');
+      sp.className='ql-icon-fallback'; sp.textContent=l.name[0];
+      a.replaceChild(sp,img);
+    };
+    a.appendChild(img);
+    grid.appendChild(a);
+  });
+}
+
+const QUOTES=[
+  {text:"오늘 하루도 충분히 잘 해낼 수 있어. 시작이 전부다.",author:""},
+  {text:"작은 전진이라도 전진이다. 오늘도 한 발 앞으로.",author:""},
+  {text:"힘들어도 괜찮아. 버티는 것 자체가 이미 강한 것이다.",author:""},
+  {text:"완벽하지 않아도 된다. 오늘 최선을 다하면 충분하다.",author:""},
+  {text:"지금 이 순간에 집중하라. 과거도 미래도 아닌, 지금이다.",author:""},
+  {text:"You are stronger than you think. Keep going.",author:""},
+  {text:"당신이 심는 씨앗은 반드시 꽃을 피운다. 포기하지 마라.",author:""},
+  {text:"힘든 길일수록, 그 끝의 풍경은 더 아름답다.",author:""},
+  {text:"오늘의 나는 어제의 나보다 분명히 성장했다.",author:""},
+  {text:"지치면 잠깐 쉬어도 된다. 멈추지만 않으면 된다.",author:""},
+  {text:"The harder you work, the luckier you get.",author:""},
+  {text:"두려움이 있다는 건, 그만큼 간절하다는 뜻이다.",author:""},
+  {text:"이미 충분히 잘 하고 있다. 오늘도 수고했다.",author:""},
+  {text:"루틴이 흔들릴 때도 있다. 내일 다시 시작하면 된다.",author:""},
+  {text:"작은 습관이 결국 위대한 삶을 만든다.",author:""},
+  {text:"Do what you can, with what you have, where you are.",author:"Theodore Roosevelt"},
+  {text:"기대를 낮추지 마라. 노력을 더해라.",author:""},
+  {text:"오늘 집중한 한 시간이 내일의 나를 바꾼다.",author:""},
+  {text:"당신이 하는 일은 분명히 누군가에게 의미가 있다.",author:""},
+  {text:"실패는 끝이 아니다. 포기가 끝이다.",author:""},
+  {text:"지금 이 순간 최선을 다하는 것, 그것으로 충분하다.",author:""},
+  {text:"한 번에 하나씩. 지금 이 일에만 집중하자.",author:""},
+  {text:"어제보다 나은 오늘. 그것이 성장이다.",author:""},
+  {text:"힘내. 오늘 하루도 당신은 해낼 수 있다.",author:""},
+  {text:"Progress, not perfection.",author:""},
+  {text:"당신의 노력은 결코 사라지지 않는다. 반드시 쌓인다.",author:""},
+  {text:"좋은 하루는 좋은 첫 한 시간에서 시작된다.",author:""},
+  {text:"오늘도 당신이 있어서 누군가의 하루가 더 나아진다.",author:""},
+  {text:"할 수 있다고 믿는 순간, 이미 절반은 이룬 것이다.",author:""},
+  {text:"Start where you are. Use what you have. Do what you can.",author:"Arthur Ashe"},
+];
+function todayQuote(){
+  const t=new Date();
+  return QUOTES[(t.getFullYear()*365+t.getMonth()*31+t.getDate())%QUOTES.length];
+}
+
+const SCHEDULES={
+  1:[
+    {time:'05-06',type:'transit',name:'기상, 점검'},
+    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
+    {time:'09-12',type:'clinic',name:'외래',span:3},
+    {time:'12-13',type:'free',name:''},
+    {time:'13-14',type:'free',name:''},
+    {time:'14-15',type:'excel',name:'📊 엑셀 작업'},
+    {time:'15-16',type:'free',name:''},
+    {time:'16-17',type:'free',name:''},
+    {time:'17-18',type:'transit',name:'전환'},
+    {time:'18-21',type:'family',name:'가족 시간',span:3},
+    {time:'21-22',type:'sleep',name:'취침 준비'},
+  ],
+  2:[
+    {time:'05-06',type:'transit',name:'기상, 점검'},
+    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
+    {time:'09-10',type:'free',name:''},
+    {time:'10-11',type:'free',name:''},
+    {time:'11-12',type:'free',name:''},
+    {time:'12-13',type:'free',name:''},
+    {time:'13-14',type:'free',name:''},
+    {time:'14-17',type:'surgery',name:'수술',span:3},
+    {time:'17-18',type:'transit',name:'전환'},
+    {time:'18-21',type:'family',name:'가족 시간',span:3},
+    {time:'21-22',type:'sleep',name:'취침 준비'},
+  ],
+  3:[
+    {time:'05-06',type:'transit',name:'기상, 점검'},
+    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
+    {time:'09-12',type:'proc',name:'시술',span:3},
+    {time:'12-13',type:'free',name:''},
+    {time:'13-14',type:'free',name:''},
+    {time:'14-15',type:'free',name:''},
+    {time:'15-16',type:'free',name:''},
+    {time:'16-17',type:'free',name:''},
+    {time:'17-18',type:'transit',name:'전환'},
+    {time:'18-21',type:'family',name:'가족 시간',span:3},
+    {time:'21-22',type:'sleep',name:'취침 준비'},
+  ],
+  4:[
+    {time:'05-06',type:'transit',name:'기상, 점검'},
+    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
+    {time:'09-10',type:'free',name:''},
+    {time:'10-12',type:'excel',name:'📊 엑셀 작업',span:2},
+    {time:'12-13',type:'free',name:''},
+    {time:'13-14',type:'free',name:''},
+    {time:'14-17',type:'clinic',name:'외래',span:3},
+    {time:'17-18',type:'transit',name:'전환'},
+    {time:'18-21',type:'family',name:'가족 시간',span:3},
+    {time:'21-22',type:'sleep',name:'취침 준비'},
+  ],
+  5:[
+    {time:'05-06',type:'transit',name:'기상, 점검'},
+    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
+    {time:'09-12',type:'surgery',name:'수술',span:3},
+    {time:'12-13',type:'free',name:''},
+    {time:'13-14',type:'free',name:''},
+    {time:'14-17',type:'surgery',name:'수술',span:3},
+    {time:'17-18',type:'transit',name:'전환'},
+    {time:'18-21',type:'family',name:'가족 시간',span:3},
+    {time:'21-22',type:'sleep',name:'취침 준비'},
+  ],
+};
+
+function blockRange(t){const p=t.split('-');return[parseInt(p[0]),parseInt(p[1])];}
+let currentDay=new Date().getDay();
+if(currentDay===0||currentDay===6)currentDay=1;
+
+function setDay(d){
+  currentDay=d;
+  document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+d).classList.add('active');
+  renderSchedule();
+}
+function renderSchedule(){
+  const cur=new Date().getHours()+new Date().getMinutes()/60;
+  const wrap=document.getElementById('schedule');wrap.innerHTML='';
+  SCHEDULES[currentDay].forEach(b=>{
+    const[s,e]=blockRange(b.time);
+    const isNow=cur>=s&&cur<e,isDone=cur>=e;
+    const row=document.createElement('div');row.className='tb-row';
+    row.innerHTML=`
+      <div class="tb-time${isNow?' now-time':''}">${b.time.replace('-','–')}</div>
+      <div class="tb-block ${b.type}${isNow?' now':''}${isDone&&b.type!=='family'&&b.type!=='sleep'?' done':''}${b.span?' span'+b.span:''}">
+        <div class="tb-name">${b.name||'— 자유 블록 —'}</div>
+      </div>`;
+    wrap.appendChild(row);
+  });
+}
+
+function updClock(){
+  const now=new Date(),h=now.getHours(),m=now.getMinutes();
+  document.getElementById('clock').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const D=['SUN','MON','TUE','WED','THU','FRI','SAT'],M=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('date').textContent=`${now.getFullYear()} · ${M[now.getMonth()]} ${String(now.getDate()).padStart(2,'0')} · ${D[now.getDay()]}`;
+  renderSchedule();
+}
+
+const WX_ICONS={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const WX_DESC={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'안개',51:'이슬비',53:'이슬비',55:'이슬비',61:'비',63:'비',65:'강한 비',71:'눈',73:'눈',75:'강한 눈',80:'소나기',81:'소나기',82:'강한 소나기',95:'뇌우',96:'우박',99:'강한 우박'};
+const DAYS_KR=['일','월','화','수','목','금','토'];
+
+async function fetchWeather(){
+  try{
+    const res=await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.6584&longitude=126.8320&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FSeoul&forecast_days=7');
+    const d=await res.json();const c=d.current,daily=d.daily;
+    document.getElementById('weather-today').innerHTML=`
+      <div class="weather-today">
+        <div class="w-icon">${WX_ICONS[c.weathercode]||'🌡️'}</div>
+        <div><div class="w-temp">${Math.round(c.temperature_2m)}°</div><div class="w-desc">${WX_DESC[c.weathercode]||''} · 체감 ${Math.round(c.apparent_temperature)}°</div></div>
+      </div>
+      <div class="w-sub">
+        <div class="w-sub-item">최고 <b>${Math.round(daily.temperature_2m_max[0])}°</b></div>
+        <div class="w-sub-item">최저 <b>${Math.round(daily.temperature_2m_min[0])}°</b></div>
+        <div class="w-sub-item">습도 <b>${c.relativehumidity_2m}%</b></div>
+        <div class="w-sub-item">바람 <b>${Math.round(c.windspeed_10m)}km/h</b></div>
+      </div>`;
+    let ww='<div class="weekly-weather">';
+    for(let i=0;i<7;i++){const dt=new Date(daily.time[i]);ww+=`<div class="ww-day${i===0?' today':''}"><div class="ww-dayname">${DAYS_KR[dt.getDay()]}</div><div class="ww-icon">${WX_ICONS[daily.weathercode[i]]||'🌡️'}</div><div class="ww-hi">${Math.round(daily.temperature_2m_max[i])}°</div><div class="ww-lo">${Math.round(daily.temperature_2m_min[i])}°</div></div>`;}
+    ww+='</div>';document.getElementById('weather-weekly').innerHTML=ww;
+  }catch(e){document.getElementById('weather-today').innerHTML='<div class="error-msg">날씨 로드 실패</div>';}
+}
+
+async function fetchAQI(){
+  try{
+    const res=await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=37.6584&longitude=126.8320&current=pm10,pm2_5&timezone=Asia%2FSeoul');
+    const d=await res.json();
+    const pm10=Math.round(d.current.pm10),pm25=Math.round(d.current.pm2_5);
+    function cls(v,t){if(t==='10'){return v<=30?'aqi-good':v<=80?'aqi-moderate':v<=150?'aqi-bad':'aqi-verybad';}return v<=15?'aqi-good':v<=35?'aqi-moderate':v<=75?'aqi-bad':'aqi-verybad';}
+    function lbl(v,t){if(t==='10'){return v<=30?'좋음':v<=80?'보통':v<=150?'나쁨':'매우나쁨';}return v<=15?'좋음':v<=35?'보통':v<=75?'나쁨':'매우나쁨';}
+    document.getElementById('weather-aqi').innerHTML=`<div class="aqi-bar"><div class="aqi-card ${cls(pm10,'10')}"><div class="aqi-label">PM10</div><div class="aqi-val">${pm10} <small style="font-size:11px;font-weight:400;">${lbl(pm10,'10')}</small></div></div><div class="aqi-card ${cls(pm25,'25')}"><div class="aqi-label">PM2.5</div><div class="aqi-val">${pm25} <small style="font-size:11px;font-weight:400;">${lbl(pm25,'25')}</small></div></div></div>`;
+  }catch(e){}
+}
+
+async function fetchAll(){
+  await Promise.all([fetchWeather(),fetchAQI()]);
+  const now=new Date();
+  document.getElementById('updated-time').textContent=`업데이트 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+
+const q=todayQuote();
+document.getElementById('quoteText').textContent=`"${q.text}"`;
+document.getElementById('quoteAuthor').textContent=q.author?`— ${q.author}`:'';
+
+buildLinks();
+updClock();
+setInterval(updClock,30000);
+setDay((new Date().getDay()===0||new Date().getDay()===6)?1:new Date().getDay());
+fetchAll();
+setInterval(fetchAll,5*60*1000);
+</script>
+</body>
+</html>
