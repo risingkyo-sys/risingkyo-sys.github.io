@@ -360,6 +360,7 @@ const LINKS = [
   { name:'Claude',      href:'claude://',                favicon:'https://claude.ai/favicon.ico',                  target:'app' },
   { name:'YouTube',     href:'youtube://',               favicon:'https://www.youtube.com/favicon.ico',            target:'app', fallback:'https://youtube.com' },
   { name:'캘린더',      href:'ical://',                  favicon:'https://www.google.com/s2/favicons?sz=64&domain=apple.com', target:'app' },
+  { name:'GitHub',      href:'https://github.com/risingkyo-sys', favicon:'https://github.com/favicon.ico', target:'new_window' },
 ];
 
 function buildLinks() {
@@ -370,22 +371,26 @@ function buildLinks() {
     a.href = l.href;
     if (l.target === '_blank') a.target = '_blank';
 
-    // 새창으로 열기 (window.open)
+    // 새창으로 열기 — 화면 오른쪽 절반 (2분할)
     if (l.target === 'new_window') {
       a.addEventListener('click', e => {
         e.preventDefault();
-        window.open(l.href, '_blank', 'noopener,noreferrer,width=1200,height=800');
+        const hw = Math.round(window.screen.width / 2);
+        const h = window.screen.height;
+        window.open(l.href, '_blank', `noopener,noreferrer,width=${hw},height=${h},left=${hw},top=0`);
       });
     }
 
-    // YouTube: 앱 시도 후 실패하면 새창
+    // YouTube: 앱 시도 후 실패하면 새창 (오른쪽 절반)
     if (l.fallback) {
       a.addEventListener('click', e => {
         e.preventDefault();
         const start = Date.now();
         window.location = l.href;
         setTimeout(() => {
-          if (Date.now() - start < 1500) window.open(l.fallback, '_blank', 'noopener,noreferrer,width=1200,height=800');
+          const hw = Math.round(window.screen.width / 2);
+          const h = window.screen.height;
+          if (Date.now() - start < 1500) window.open(l.fallback, '_blank', `noopener,noreferrer,width=${hw},height=${h},left=${hw},top=0`);
         }, 800);
       });
     }
