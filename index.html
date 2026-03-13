@@ -375,22 +375,22 @@ function buildLinks() {
     if (l.target === 'new_window') {
       a.addEventListener('click', e => {
         e.preventDefault();
-        const hw = Math.round(window.screen.width / 2);
+        const w = Math.round(window.screen.width * 2 / 3);
         const h = window.screen.height;
-        window.open(l.href, '_blank', `noopener,noreferrer,width=${hw},height=${h},left=${hw},top=0`);
+        window.open(l.href, '_blank', `noopener,noreferrer,width=${w},height=${h},left=${window.screen.width - w},top=0`);
       });
     }
 
-    // YouTube: 앱 시도 후 실패하면 새창 (오른쪽 절반)
+    // YouTube: 앱 시도 후 실패하면 새창 (오른쪽 2/3)
     if (l.fallback) {
       a.addEventListener('click', e => {
         e.preventDefault();
         const start = Date.now();
         window.location = l.href;
         setTimeout(() => {
-          const hw = Math.round(window.screen.width / 2);
+          const w = Math.round(window.screen.width * 2 / 3);
           const h = window.screen.height;
-          if (Date.now() - start < 1500) window.open(l.fallback, '_blank', `noopener,noreferrer,width=${hw},height=${h},left=${hw},top=0`);
+          if (Date.now() - start < 1500) window.open(l.fallback, '_blank', `noopener,noreferrer,width=${w},height=${h},left=${window.screen.width - w},top=0`);
         }, 800);
       });
     }
