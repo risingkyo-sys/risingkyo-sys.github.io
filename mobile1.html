@@ -79,8 +79,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .task-textarea:focus { border-color:#6366f1; }
 
 /* 루틴 체크 */
-.routine-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding-bottom:20px; }
-.routine-item { display:flex; align-items:center; gap:12px; padding:14px; border:1px solid var(--border2); border-radius:10px; background:#fafafa; cursor:pointer; transition:all 0.2s; -webkit-tap-highlight-color:rgba(0,0,0,0.05); }
+.routine-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding-bottom:20px; }
+.routine-item { display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 6px; border:1px solid var(--border2); border-radius:10px; background:#fafafa; cursor:pointer; transition:all 0.2s; -webkit-tap-highlight-color:rgba(0,0,0,0.05); }
 .routine-item.done { background:#f0fdf4; border-color:#bbf7d0; }
 .routine-check { width:22px; height:22px; border-radius:50%; border:2px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
 .routine-item.done .routine-check { background:#10b981; border-color:#10b981; }
@@ -155,22 +155,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="quote-author" id="quoteAuthor"></div>
 </div>
 
-<!-- 데일리 스케줄 -->
-<div class="section">
-  <div class="section-title">Daily Schedule</div>
-  <div class="day-tabs">
-    <div class="day-tab" id="tab-1" onclick="setDay(1)">MON</div>
-    <div class="day-tab" id="tab-2" onclick="setDay(2)">TUE</div>
-    <div class="day-tab" id="tab-3" onclick="setDay(3)">WED</div>
-    <div class="day-tab" id="tab-4" onclick="setDay(4)">THU</div>
-    <div class="day-tab" id="tab-5" onclick="setDay(5)">FRI</div>
-    <div class="day-tab" id="tab-6" onclick="setDay(6)">WKD</div>
-  </div>
-  <div class="tb-schedule" id="schedule"></div>
-</div>
-
-<div class="divider"></div>
-
 <!-- 이번 주 집중 -->
 <div class="section">
   <div class="section-header">
@@ -224,6 +208,22 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <span class="routine-name">영양제</span>
     </div>
   </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 데일리 스케줄 -->
+<div class="section">
+  <div class="section-title">Daily Schedule</div>
+  <div class="day-tabs">
+    <div class="day-tab" id="tab-1" onclick="setDay(1)">MON</div>
+    <div class="day-tab" id="tab-2" onclick="setDay(2)">TUE</div>
+    <div class="day-tab" id="tab-3" onclick="setDay(3)">WED</div>
+    <div class="day-tab" id="tab-4" onclick="setDay(4)">THU</div>
+    <div class="day-tab" id="tab-5" onclick="setDay(5)">FRI</div>
+    <div class="day-tab" id="tab-6" onclick="setDay(6)">WKD</div>
+  </div>
+  <div class="tb-schedule" id="schedule"></div>
 </div>
 
 <div class="divider"></div>
