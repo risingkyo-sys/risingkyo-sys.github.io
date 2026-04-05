@@ -90,6 +90,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .routine-item.done .routine-name { color:#15803d; }
 .routine-note { font-size:10px; color:var(--dim); margin-top:2px; text-align:right; padding-bottom:4px; }
 
+/* 식단 */
+.meal-grid { display:flex; flex-direction:column; gap:6px; padding-bottom:18px; }
+.meal-row { display:flex; align-items:center; gap:10px; }
+.meal-label { font-size:12px; font-weight:600; color:var(--dim2); width:32px; flex-shrink:0; text-align:center; }
+.meal-input { flex:1; background:#fafafa; border:1px solid var(--border2); border-radius:6px; padding:9px 12px; font-size:13px; font-family:'Noto Sans KR',sans-serif; color:var(--text); outline:none; }
+.meal-input:focus { border-color:#6366f1; }
+
 /* 날씨 */
 .weather-wrap { padding-bottom:20px; }
 .weather-today { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
@@ -114,13 +121,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .ww-icon { font-size:20px; }
 .ww-hi { font-size:13px; font-weight:600; color:var(--text); }
 .ww-lo { font-size:12px; color:var(--dim); }
-
-/* 환율 */
-.fx-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#fafafa; border-radius:8px; border:1px solid var(--border); margin-bottom:18px; }
-.fx-name { font-size:13px; font-weight:500; color:var(--text); }
-.fx-right { text-align:right; }
-.fx-val { font-family:'Inter',sans-serif; font-size:20px; font-weight:300; color:var(--text); }
-.fx-sub { font-size:10px; color:var(--dim); margin-top:1px; }
 
 /* 퀵링크 — 4×2 */
 .links-wrap { padding-bottom:36px; }
@@ -203,10 +203,26 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <div class="routine-check"><div class="routine-check-mark"></div></div>
       <span class="routine-name">영어</span>
     </div>
-    <div class="routine-item" id="r-supple" onclick="toggleRoutine('supple')">
+    <div class="routine-item" id="r-reading" onclick="toggleRoutine('reading')">
       <div class="routine-check"><div class="routine-check-mark"></div></div>
-      <span class="routine-name">영양제</span>
+      <span class="routine-name">독서</span>
     </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- 오늘 식단 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">오늘 식단</div>
+    <span style="font-size:10px; color:var(--dim);">자정 자동 리셋</span>
+  </div>
+  <div class="meal-grid">
+    <div class="meal-row"><span class="meal-label">아침</span><input class="meal-input" id="meal-breakfast" placeholder="—" oninput="saveMeals()"></div>
+    <div class="meal-row"><span class="meal-label">점심</span><input class="meal-input" id="meal-lunch" placeholder="—" oninput="saveMeals()"></div>
+    <div class="meal-row"><span class="meal-label">저녁</span><input class="meal-input" id="meal-dinner" placeholder="—" oninput="saveMeals()"></div>
+    <div class="meal-row"><span class="meal-label">간식</span><input class="meal-input" id="meal-snack" placeholder="—" oninput="saveMeals()"></div>
   </div>
 </div>
 
@@ -236,14 +252,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
     <div id="weather-aqi"></div>
     <div id="weather-weekly"></div>
   </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- 환율 -->
-<div class="section">
-  <div class="section-title">환율</div>
-  <div id="fx-content"><div class="loading">불러오는 중...</div></div>
 </div>
 
 <div class="divider"></div>
@@ -370,7 +378,8 @@ const SCHEDULES={
   ],
   4:[
     {time:'05-06',type:'transit',name:'기상, 점검'},
-    {time:'06-08',type:'transit',name:'운동, 출근',span:2},
+    {time:'06-07',type:'transit',name:'출근'},
+    {time:'07-08',type:'clinic',name:'컨퍼런스'},
     {time:'08-09',type:'frog',name:'🐸 Eat That Frog'},
     {time:'09-10',type:'free',name:''},
     {time:'10-12',type:'excel',name:'📊 엑셀 작업',span:2},
@@ -510,7 +519,7 @@ function resetTask(){
 }
 
 // ── 루틴 체크 (자정 리셋) ──
-const ROUTINES=['exercise','paper','english','supple'];
+const ROUTINES=['exercise','paper','english','reading'];
 function getTodayKey(){
   const d=new Date();
   return `routine_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
@@ -532,6 +541,28 @@ function toggleRoutine(r){
   localStorage.setItem(key,JSON.stringify(saved));
   const el=document.getElementById('r-'+r);
   el.classList.toggle('done',saved[r]);
+}
+
+// ── 식단 (자정 리셋) ──
+const MEALS=['breakfast','lunch','dinner','snack'];
+function getMealKey(){
+  const d=new Date();
+  return `meal_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+}
+function initMeals(){
+  const key=getMealKey();
+  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  MEALS.forEach(m=>{
+    document.getElementById('meal-'+m).value=saved[m]||'';
+  });
+  // 오래된 식단 키 정리
+  Object.keys(localStorage).filter(k=>k.startsWith('meal_')&&k!==key).forEach(k=>localStorage.removeItem(k));
+}
+function saveMeals(){
+  const key=getMealKey();
+  const data={};
+  MEALS.forEach(m=>{ data[m]=document.getElementById('meal-'+m).value; });
+  localStorage.setItem(key,JSON.stringify(data));
 }
 
 // ── 날씨 ──
@@ -571,16 +602,8 @@ async function fetchAQI(){
   }catch(e){}
 }
 
-async function fetchFX(){
-  try{
-    const res=await fetch('https://api.frankfurter.app/latest?from=USD&to=KRW');
-    const d=await res.json();
-    document.getElementById('fx-content').innerHTML=`<div class="fx-row"><div class="fx-name">USD / KRW</div><div class="fx-right"><div class="fx-val">₩ ${Math.round(d.rates.KRW).toLocaleString()}</div><div class="fx-sub">${d.date} 기준</div></div></div>`;
-  }catch(e){document.getElementById('fx-content').innerHTML='<div class="error-msg">환율 로드 실패</div>';}
-}
-
 async function fetchAll(){
-  await Promise.all([fetchWeather(),fetchAQI(),fetchFX()]);
+  await Promise.all([fetchWeather(),fetchAQI()]);
   const now=new Date();
   document.getElementById('updated-time').textContent=`업데이트 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 }
@@ -594,6 +617,7 @@ buildLinks();
 initWeekFocus();
 initTask();
 initRoutine();
+initMeals();
 updClock();
 setInterval(updClock,30000);
 setDay((new Date().getDay()===0||new Date().getDay()===6)?6:new Date().getDay());
