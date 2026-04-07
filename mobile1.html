@@ -216,7 +216,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 <div class="section">
   <div class="section-header">
     <div class="section-title">오늘 식단</div>
-    <span style="font-size:10px; color:var(--dim);">자정 자동 리셋</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button class="reset-btn" onclick="sendMealToSheet()" id="mealSaveBtn">기록</button>
+      <span style="font-size:10px; color:var(--dim);">자정 자동 리셋</span>
+    </div>
   </div>
   <div class="meal-grid">
     <div class="meal-row"><span class="meal-label">아침</span><input class="meal-input" id="meal-breakfast" placeholder="—" oninput="saveMeals()"></div>
@@ -563,6 +566,20 @@ function saveMeals(){
   const data={};
   MEALS.forEach(m=>{ data[m]=document.getElementById('meal-'+m).value; });
   localStorage.setItem(key,JSON.stringify(data));
+}
+function sendMealToSheet(){
+  const key=getMealKey();
+  const saved=JSON.parse(localStorage.getItem(key)||'{}');
+  if(!saved.breakfast&&!saved.lunch&&!saved.dinner&&!saved.snack){alert('식단을 먼저 입력해주세요.');return;}
+  const today=new Date();
+  const dateStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const btn=document.getElementById('mealSaveBtn');
+  btn.textContent='···';
+  fetch('https://script.google.com/macros/s/AKfycby5-j3D6RsFvxD4asJPisxd6-U4UAD2sjjeqQLGpsGcVSMTYdnteEhEQ-3iND0gU4Xr/exec',{
+    method:'POST',
+    body:JSON.stringify({date:dateStr,breakfast:saved.breakfast||'',lunch:saved.lunch||'',dinner:saved.dinner||'',snack:saved.snack||''})
+  }).then(()=>{btn.textContent='✅ 완료';btn.style.background='#dcfce7';btn.style.color='#16a34a';btn.style.borderColor='#bbf7d0';setTimeout(()=>{btn.textContent='기록';btn.style.background='';btn.style.color='';btn.style.borderColor='';},3000);
+  }).catch(()=>{btn.textContent='실패';setTimeout(()=>{btn.textContent='기록';},3000);});
 }
 
 // ── 날씨 ──
