@@ -567,13 +567,17 @@ function sendMealToSheet(){
   const dateStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   const btn=document.getElementById('mealSaveBtn');
   btn.textContent='···';
-  const p=new URLSearchParams({date:dateStr,breakfast:meals.breakfast||'',lunch:meals.lunch||'',dinner:meals.dinner||'',snack:meals.snack||'',exercise:routines.exercise?'O':'',paper:routines.paper?'O':'',english:routines.english?'O':'',reading:routines.reading?'O':''});
+  const fields={date:dateStr,breakfast:meals.breakfast||'',lunch:meals.lunch||'',dinner:meals.dinner||'',snack:meals.snack||'',exercise:routines.exercise?'O':'',paper:routines.paper?'O':'',english:routines.english?'O':'',reading:routines.reading?'O':''};
   const iframe=document.createElement('iframe');
-  iframe.style.display='none';
-  iframe.name='sheetFrame';
+  iframe.name='sheetFrame';iframe.style.display='none';
   document.body.appendChild(iframe);
-  iframe.src='https://script.google.com/macros/s/AKfycby5-j3D6RsFvxD4asJPisxd6-U4UAD2sjjeqQLGpsGcVSMTYdnteEhEQ-3iND0gU4Xr/exec?'+p;
-  setTimeout(()=>{btn.textContent='✅ 완료';btn.style.background='#dcfce7';btn.style.color='#16a34a';btn.style.borderColor='#bbf7d0';setTimeout(()=>{btn.textContent='기록';btn.style.background='';btn.style.color='';btn.style.borderColor='';document.body.removeChild(iframe);},3000);},2000);
+  const form=document.createElement('form');
+  form.method='POST';form.action='https://script.google.com/macros/s/AKfycby5-j3D6RsFvxD4asJPisxd6-U4UAD2sjjeqQLGpsGcVSMTYdnteEhEQ-3iND0gU4Xr/exec';
+  form.target='sheetFrame';form.style.display='none';
+  Object.entries(fields).forEach(([k,v])=>{const inp=document.createElement('input');inp.type='hidden';inp.name=k;inp.value=v;form.appendChild(inp);});
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(()=>{btn.textContent='✅ 완료';btn.style.background='#dcfce7';btn.style.color='#16a34a';btn.style.borderColor='#bbf7d0';setTimeout(()=>{btn.textContent='기록';btn.style.background='';btn.style.color='';btn.style.borderColor='';document.body.removeChild(iframe);document.body.removeChild(form);},3000);},2000);
 }
 
 // ── 날씨 ──
